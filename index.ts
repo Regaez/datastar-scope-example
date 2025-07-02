@@ -12,15 +12,20 @@ const spellcheck = (m: string = "") => {
 };
 
 const SpellcheckComponent = ({
+  scope = "",
   text = "",
   count = 0,
 }: {
+  scope?: string;
   text?: string;
   count?: number;
 } = {}) => {
   const getScope = "${el.closest('[data-scope]').dataset.scope}";
   return html`
-    <div data-scope data-signals__scoped="${JSON.stringify({ text })}">
+    <div
+      data-scope="${scope}"
+      data-signals__scoped="${JSON.stringify({ text })}"
+    >
       <input
         type="text"
         name="text"
@@ -69,7 +74,7 @@ app.post("/api/components/spellcheck", async (c) => {
   }
   const body = await c.req.json();
   const output = spellcheck(body[scope]?.text);
-  return c.html(SpellcheckComponent({ ...output }), 200, {
+  return c.html(SpellcheckComponent({ ...output, scope }), 200, {
     "datastar-selector": `[data-scope="${scope}"]`,
   });
 });
