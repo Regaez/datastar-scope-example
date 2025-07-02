@@ -17,7 +17,7 @@ const SpellcheckComponent = ({
 }: {
   text?: string;
   count?: number;
-}) => {
+} = {}) => {
   const textSignal = `text`;
   const signals = JSON.stringify({ [textSignal]: text });
   return html`
@@ -25,7 +25,7 @@ const SpellcheckComponent = ({
       <input
         type="text"
         data-bind__scoped="${textSignal}"
-        data-on-blur="@post(\`/spellcheck?scope=\${el.closest('[data-scope]').dataset.scope}\`, {filterSignals: { include: new RegExp(\`^\${el.closest('[data-scope]').dataset.scope}\`)}})"
+        data-on-blur="@post(\`/api/components/spellcheck?scope=\${el.closest('[data-scope]').dataset.scope}\`, {filterSignals: { include: new RegExp(\`^\${el.closest('[data-scope]').dataset.scope}\`)}})"
       />
       ${count > 0 &&
       html`<small>There were ${count} spelling mistakes corrected.</small>`}
@@ -55,19 +55,18 @@ app.get("/", (c) => {
         <main id="main">
           <h1>Spellcheck</h1>
           <p>Write "color" or "favor" to be corrected.</p>
-          ${SpellcheckComponent({})} ${SpellcheckComponent({})}
+          ${SpellcheckComponent()} ${SpellcheckComponent()}
         </main>
       </body>
     </html>
   `);
 });
 
-app.post("/spellcheck", async (c) => {
+app.post("/api/components/spellcheck", async (c) => {
   const scope = c.req.query("scope");
   if (!scope) {
     return c.status(400);
   }
-
   const body = await c.req.json();
   const output = spellcheck(body[scope]?.text);
   return c.html(SpellcheckComponent({ ...output }), 200, {
