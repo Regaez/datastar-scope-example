@@ -18,14 +18,14 @@ const SpellcheckComponent = ({
   text?: string;
   count?: number;
 } = {}) => {
-  const textSignal = `text`;
-  const signals = JSON.stringify({ [textSignal]: text });
+  const getScope = "${el.closest('[data-scope]').dataset.scope}";
   return html`
-    <div data-scope data-signals__scoped="${signals}">
+    <div data-scope data-signals__scoped="${JSON.stringify({ text })}">
       <input
         type="text"
-        data-bind__scoped="${textSignal}"
-        data-on-blur="@post(\`/api/components/spellcheck?scope=\${el.closest('[data-scope]').dataset.scope}\`, {filterSignals: { include: new RegExp(\`^\${el.closest('[data-scope]').dataset.scope}\`)}})"
+        name="text"
+        data-bind__scoped="text"
+        data-on-blur="@post(\`/api/components/spellcheck?scope=${getScope}\`, {filterSignals: {include: new RegExp(\`^${getScope}\`)}})"
       />
       ${count > 0 &&
       html`<small>There were ${count} spelling mistakes corrected.</small>`}
