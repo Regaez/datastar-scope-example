@@ -25,7 +25,7 @@ const SpellcheckComponent = ({
       <input
         type="text"
         data-bind__scoped="${textSignal}"
-        data-on-blur="@post(\`/spellcheck?scope=\${el.closest('[data-scope]').dataset.scope}\`, {filterSignals: \`^\${el.closest('[data-scope]').dataset.scope})\`})"
+        data-on-blur="@post(\`/spellcheck?scope=\${el.closest('[data-scope]').dataset.scope}\`, {filterSignals: { include: new RegExp(\`^\${el.closest('[data-scope]').dataset.scope}\`)}})"
       />
       ${count > 0 &&
       html`<small>There were ${count} spelling mistakes corrected.</small>`}
