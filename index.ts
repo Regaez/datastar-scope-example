@@ -60,7 +60,8 @@ app.get("/", (c) => {
         <main id="main">
           <h1>Spellcheck</h1>
           <p>Write "color" or "favor" to be corrected.</p>
-          ${SpellcheckComponent()} ${SpellcheckComponent()}
+          <div id="container">${SpellcheckComponent()}</div>
+          <button data-on-click="@post('/add')">Add</button>
         </main>
       </body>
     </html>
@@ -76,6 +77,13 @@ app.post("/api/components/spellcheck", async (c) => {
   const output = spellcheck(body[scope]?.text);
   return c.html(SpellcheckComponent({ ...output, scope }), 200, {
     "datastar-selector": `[data-scope="${scope}"]`,
+  });
+});
+
+app.post("/add", async (c) => {
+  return c.html(SpellcheckComponent(), 200, {
+    "datastar-mode": "append",
+    "datastar-selector": `#container`,
   });
 });
 
